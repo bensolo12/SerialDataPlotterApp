@@ -18,6 +18,19 @@ namespace DataPlotterApp
         IEnumerable<string> allData = new List<string>();
         private string PortName;
         private int BaudRate;
+        private string current;
+        private string voltage;
+
+        public string Current
+        {
+            get { return current; }
+            set { current = value; }
+        }
+        public string Voltage
+        {
+            get { return voltage; }
+            set { voltage = value; }
+        }
 
         public SerialPortFactory(string portName, int baudRate = 9600)
         {
@@ -42,12 +55,15 @@ namespace DataPlotterApp
         private void Recieve(object sender, SerialDataReceivedEventArgs e)
         {
             string? allCurrentData = serial.ReadExisting();            
-            //received_data = serial.ReadLine();
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), allCurrentData);
         }
 
         private void WriteData(string text)
         {
+            List<string> allLines = text.Split("\n").ToList();
+            var topLine = allLines.First().Split(",");
+            Current = topLine.First();
+            Voltage = topLine.Last();
             WriteToFile(text);
             allData.Append(text);
         }
