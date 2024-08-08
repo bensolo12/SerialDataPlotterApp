@@ -21,12 +21,12 @@ namespace DataPlotterApp
         private string current;
         private string voltage;
 
-        public string Current
+        public string? Current
         {
             get { return current; }
             set { current = value; }
         }
-        public string Voltage
+        public string? Voltage
         {
             get { return voltage; }
             set { voltage = value; }
@@ -62,8 +62,11 @@ namespace DataPlotterApp
         {
             List<string> allLines = text.Split("\n").ToList();
             var topLine = allLines.First().Split(",");
-            Current = topLine.First();
-            Voltage = topLine.Last();
+            if (topLine.Length > 0)
+            {
+                Current = topLine.First();
+                Voltage = topLine.Last();
+            }
             WriteToFile(text);
             allData.Append(text);
         }

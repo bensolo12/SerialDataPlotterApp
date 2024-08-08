@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="CurrentLabel" Content="{Binding Current}"  Grid.Row="0"></Label>
+        <Label x:Name="VoltageLabel" Content="{Binding Voltage}" Grid.Row="1"></Label>
     </Grid>
 </Window>
