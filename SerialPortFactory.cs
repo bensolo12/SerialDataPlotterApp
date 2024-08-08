@@ -41,15 +41,24 @@ namespace DataPlotterApp
         private delegate void UpdateUiTextDelegate(string text);
         private void Recieve(object sender, SerialDataReceivedEventArgs e)
         {
-            received_data = serial.ReadExisting();
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), received_data);
+            string? allCurrentData = serial.ReadExisting();            
+            //received_data = serial.ReadLine();
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), allCurrentData);
         }
 
         private void WriteData(string text)
         {
-            string timeStampedData = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + text;
-            File.AppendAllText("data.txt", timeStampedData);
+            WriteToFile(text);
             allData.Append(text);
+        }
+        private void WriteToFile(string text)
+        {
+            List<string> allLines = text.Split("\n").ToList();
+            foreach (string line in allLines)
+            {
+                string timeStampedData = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + line + "\n";
+                File.AppendAllText("data.txt", timeStampedData);
+            }            
         }
         public void closePort()
         {
