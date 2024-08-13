@@ -15,7 +15,8 @@ namespace DataPlotterApp
         public MainWindow()
         {
             InitializeComponent();
-            port6 = new SerialPortFactory("COM6");            
+            port6 = new SerialPortFactory("COM6");   
+            DataContext = port6;
         }        
 
         private void Close_Form(object sender, RoutedEventArgs e)
