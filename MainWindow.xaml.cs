@@ -15,7 +15,12 @@ namespace DataPlotterApp
         public MainWindow()
         {
             InitializeComponent();
-            port6 = new SerialPortFactory("COM6");   
+            port6 = new SerialPortFactory("COM6");
+            if(port6.connect() == 1)
+            {
+                MockSerialPort mock = new MockSerialPort();
+                DataContext = mock;
+            }
             DataContext = port6;
         }        
 

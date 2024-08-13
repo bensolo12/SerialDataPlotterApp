@@ -1,43 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Threading;
 using System.Windows.Threading;
-using System.Diagnostics;
-using System.ComponentModel;
+using System.Windows;
+using System.IO;
 
 namespace DataPlotterApp
 {
-    internal class SerialPortFactory : INotifyPropertyChanged
+    internal class MockSerialPort : SerialPortFactory
     {
-        SerialPort serial = new SerialPort();
         string received_data;
         IEnumerable<string> allData = new List<string>();
-        private string PortName;
-        private int BaudRate;
         private string current;
-        private string voltage;     
-        private string DispPortname;
+        private string voltage;
+        private string isMock;
         private int randCurrent;
         private int randVoltage;
         private string allCurrentData;
-        private int connectionState;
+        private string DispPortname;
 
-        
-        public int ConnectionState
+        public string IsMock
         {
-            get { return connect(); }
+            get { return DispPortname; }
             set
             {
-                if (connectionState != value)
+                if (DispPortname != value)
                 {
-                    connectionState = value;
-                    OnPropertyChanged("ConnectionState");
+                    DispPortname = value;
+                    OnPropertyChanged("IsMock");
                 }
             }
         }
@@ -65,38 +59,34 @@ namespace DataPlotterApp
                 }
             }
         }
+        public MockSerialPort()
+        {
+            connectMock();
+        }
+        private async void connectMock()
+        {
+            Console.WriteLine("Mock connecting");
+            isMock = "Mock Connected";
 
-        public SerialPortFactory(string portName, int baudRate = 9600)
-        {
-            PortName = portName;
-            BaudRate = baudRate;            
+            await Task.Run(() => runBackgroundWorker());
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), allCurrentData);
         }
-        public SerialPortFactory() { }
-        public int connect()
+        private async void runBackgroundWorker()
         {
-            serial.PortName = PortName;
-            serial.BaudRate = BaudRate;
-            serial.Handshake = Handshake.None;
-            serial.Parity = Parity.None;
-            serial.DataBits = 8;
-            serial.StopBits = StopBits.Two;
-            serial.ReadTimeout = 200;
-            serial.WriteTimeout = 50;
-            try
-            {
-                DispPortname = "Connected to port: " + PortName;
-                Console.WriteLine("Connected to port: " + PortName);
-                serial.Open();
-            }
-            catch (FileNotFoundException)
-            {
-                Console.WriteLine("Port not found, connecting mock");
-                return RadioConnectionReturnCode.CONNECTION_FAILURE;
-            }
-            serial.DataReceived += new SerialDataReceivedEventHandler(Recieve);
-            return RadioConnectionReturnCode.SUCCESS;
+            BackgroundWorker backgroundWorker = new BackgroundWorker();
+            backgroundWorker.DoWork += new DoWorkEventHandler(MockData);
+            backgroundWorker.RunWorkerAsync();
         }
-        
+        private void MockData(object? sender, DoWorkEventArgs e)
+        {
+            while (isMock == "Mock Connected")
+            {
+                randCurrent = new Random().Next(0, 100);
+                randVoltage = new Random().Next(0, 24);
+                allCurrentData = randCurrent.ToString() + "," + randVoltage.ToString();
+                Thread.Sleep(5000);
+            }
+        }
         private delegate void UpdateUiTextDelegate(string text);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -104,12 +94,6 @@ namespace DataPlotterApp
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void Recieve(object sender, SerialDataReceivedEventArgs e)
-        {
-            string? allCurrentData = serial.ReadExisting();            
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), allCurrentData);
         }
 
         private void WriteData(string text)
@@ -129,10 +113,6 @@ namespace DataPlotterApp
                 string timeStampedData = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + line + "\n";
                 File.AppendAllText("data.txt", timeStampedData);
             }
-        }
-        public void closePort()
-        {
-            if (serial.IsOpen) serial.Close();
         }
     }
 }
