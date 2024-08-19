@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataPlotterApp"
+        xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="DataPlotter" Height="450" Width="800">
     <Grid>
@@ -23,5 +24,10 @@
         <Label x:Name="currentValue" Content="{Binding Current}" Grid.Row="1" Grid.Column="1"/>
         <Label Content="Voltage: " Grid.Row="2" Grid.Column="0"/>
         <Label x:Name="voltageValue" Content="{Binding Voltage}" Grid.Row="2" Grid.Column="1"/>
+        <oxy:Plot Title="{Binding Title}">
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding Points}"/>
+            </oxy:Plot.Series>
+        </oxy:Plot>
     </Grid>
 </Window>

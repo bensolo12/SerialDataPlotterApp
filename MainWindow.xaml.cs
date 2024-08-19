@@ -2,6 +2,7 @@
 using System.IO.Ports;
 using System.Windows.Threading;
 using System.IO;
+using OxyPlot;
 
 namespace DataPlotterApp
 {
@@ -26,6 +27,10 @@ namespace DataPlotterApp
                 DataContext = mock;
             }            
         }        
+
+        public string Title { get; private set; }
+
+        public IList<DataPoint> Points { get; private set; }
 
         private void Close_Form(object sender, RoutedEventArgs e)
         {

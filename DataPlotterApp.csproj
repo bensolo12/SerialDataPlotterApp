@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OxyPlot.Wpf" Version="1.0.0" />
     <PackageReference Include="System.IO.Ports" Version="9.0.0-preview.6.24327.7" />
   </ItemGroup>
 
