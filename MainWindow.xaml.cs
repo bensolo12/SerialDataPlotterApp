@@ -24,7 +24,8 @@ namespace DataPlotterApp
             }
             else {
                 mock = new MockSerialPort();
-                DataContext = mock;
+                DataContext = mock;                
+                Points.Append(Convert.ToDouble(mock.Current));
             }            
         }        
 

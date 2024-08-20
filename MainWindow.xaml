@@ -7,27 +7,33 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="DataPlotter" Height="450" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>        
-        <Label x:Name="isMock" Content="{Binding IsMock}" HorizontalAlignment="Right"/>
-        <Label Content="Current: " Grid.Row="1" Grid.Column="0"/>
-        <Label x:Name="currentValue" Content="{Binding Current}" Grid.Row="1" Grid.Column="1"/>
-        <Label Content="Voltage: " Grid.Row="2" Grid.Column="0"/>
-        <Label x:Name="voltageValue" Content="{Binding Voltage}" Grid.Row="2" Grid.Column="1"/>
-        <oxy:Plot Title="{Binding Title}">
-            <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding Points}"/>
-            </oxy:Plot.Series>
-        </oxy:Plot>
-    </Grid>
+    <TabControl>
+        <TabItem Header="Data">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="isMock" Content="{Binding IsMock}" HorizontalAlignment="Right"/>
+                <Label Content="Current: " Grid.Row="1" Grid.Column="0"/>
+                <Label x:Name="currentValue" Content="{Binding Current}" Grid.Row="1" Grid.Column="1"/>
+                <Label Content="Voltage: " Grid.Row="2" Grid.Column="0"/>
+                <Label x:Name="voltageValue" Content="{Binding Voltage}" Grid.Row="2" Grid.Column="1"/>
+            </Grid>
+        </TabItem>
+    <TabItem Header="Plot">
+            <oxy:Plot Title="{Binding Title}">
+                <oxy:Plot.Series>
+                    <oxy:LineSeries ItemsSource="{Binding Points}"/>
+                </oxy:Plot.Series>
+            </oxy:Plot>
+        </TabItem>
+    </TabControl>  
 </Window>
