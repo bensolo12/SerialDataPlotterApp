@@ -11,17 +11,20 @@ namespace DataPlotterApp
     public partial class MainWindow : Window
     {
         SerialPortFactory port6;
+        MockSerialPort mock;
 
         public MainWindow()
         {
             InitializeComponent();
             port6 = new SerialPortFactory("COM6");
-            if(port6.connect() == 1)
-            {
-                MockSerialPort mock = new MockSerialPort();
-                DataContext = mock;
+            if (port6.ConnectionState == 0)
+            {                
+                DataContext = port6;
             }
-            DataContext = port6;
+            else {
+                mock = new MockSerialPort();
+                DataContext = mock;
+            }            
         }        
 
         private void Close_Form(object sender, RoutedEventArgs e)

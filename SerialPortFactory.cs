@@ -28,7 +28,18 @@ namespace DataPlotterApp
         private string allCurrentData;
         private int connectionState;
 
-        
+        public string IsMock
+        {
+            get { return DispPortname; }
+            set
+            {
+                if (DispPortname != value)
+                {
+                    DispPortname = value;
+                    OnPropertyChanged("IsMock");
+                }
+            }
+        }
         public int ConnectionState
         {
             get { return connect(); }
@@ -83,8 +94,7 @@ namespace DataPlotterApp
             serial.ReadTimeout = 200;
             serial.WriteTimeout = 50;
             try
-            {
-                DispPortname = "Connected to port: " + PortName;
+            {                
                 Console.WriteLine("Connected to port: " + PortName);
                 serial.Open();
             }
@@ -93,6 +103,7 @@ namespace DataPlotterApp
                 Console.WriteLine("Port not found, connecting mock");
                 return RadioConnectionReturnCode.CONNECTION_FAILURE;
             }
+            DispPortname = "Connected to port: " + PortName;
             serial.DataReceived += new SerialDataReceivedEventHandler(Recieve);
             return RadioConnectionReturnCode.SUCCESS;
         }
