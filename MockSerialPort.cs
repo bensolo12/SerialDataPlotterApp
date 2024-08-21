@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows;
 using System.IO;
+using System.Data;
 
 namespace DataPlotterApp
 {
@@ -22,6 +23,22 @@ namespace DataPlotterApp
         private int randVoltage;
         private string allCurrentData;
         private string DispPortname;
+        private int connectionState;
+        private bool testWait;
+        BackgroundWorker backgroundWorker = new BackgroundWorker();        
+
+        public int ConnectionState
+        {
+            get { return connectMock(); }
+            set
+            {
+                if (connectionState != value)
+                {
+                    connectionState = value;
+                    OnPropertyChanged("ConnectionState");
+                }
+            }
+        }
 
         public string IsMock
         {
@@ -61,29 +78,39 @@ namespace DataPlotterApp
         }
         public MockSerialPort()
         {
+            ConnectionState = 1;
             //DispPortname = "Mock Connected";            
-            connectMock();            
+            //connectMock();            
         }
-        private async void connectMock()
+         
+        public int connectMock()
         {
+            //ConnectionState = 1;
             Console.WriteLine("Mock connecting");
             isMock = "Mock Connected";
             Current = "0";
             Voltage = "0";
             DispPortname = "Connected to port: Mock";
-            while (isMock == "Mock Connected")
+            //while (isMock == "Mock Connected")
+            //{
+            //await            
+            Task.Run(() => runBackgroundWorker());                       
+            while (testWait == false)
             {
-            await Task.Run(() => runBackgroundWorker());
-
+                Thread.Sleep(1000);
             }
+
+            //}
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Send, new UpdateUiTextDelegate(WriteData), allCurrentData);
+            return 1;
 
         }
         private async void runBackgroundWorker()
         {
-            BackgroundWorker backgroundWorker = new BackgroundWorker();
+           
             backgroundWorker.DoWork += new DoWorkEventHandler(MockData);
             backgroundWorker.RunWorkerAsync();
+            testWait = true;
         }
         private void MockData(object? sender, DoWorkEventArgs e)
         {
@@ -98,6 +125,7 @@ namespace DataPlotterApp
                 //});
                 
                 //Thread.Sleep(1000);
+                testWait = true;
             }
         }
         private delegate void UpdateUiTextDelegate(string text);
@@ -113,9 +141,10 @@ namespace DataPlotterApp
         {
             if(Application.Current.Dispatcher.CheckAccess())
             {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(data));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(data));
             }
-            else             {
+            else
+            {
                 Application.Current.Dispatcher.Invoke(() => { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(data)); });
             }
         }
